@@ -13,9 +13,9 @@ body{
 }
 
 main{
+    margin: 100px;
     height: 100%;
     width: 100%;
-    margin: 50px;
     background: url(../images/lion_sleeping.jpg);
     background-size: contain;
     background-repeat: no-repeat;
@@ -23,7 +23,7 @@ main{
 }
 
 form{
-    margin-top: 30px;
+    margin-top: 60px;
     margin-left: 60px;
 }
 
@@ -40,7 +40,12 @@ form button{
 }
 
 #indexMain{
+    margin: 50px;
     height: 100%;
+    background: url(../images/lion_awake.jpg);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 #indexForm{
