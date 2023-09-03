@@ -28,6 +28,8 @@ void route()
     }
 
     ROUTE_GET("../images/lion_awake.jpg") {
+        
+        printf("HTTP/1.1 200 OK\r\n");
     FILE *image = fopen("images/lion_awake.jpg", "rb");
     if (image == NULL) {
         perror("Unable to open image file");
@@ -36,9 +38,9 @@ void route()
         long image_size = ftell(image);
         rewind(image);
 
-        printf("HTTP/1.1 200 OK\r\n");
-        // printf("Content-Type: image/jpeg\r\n");
-        // printf("Content-Length: %ld\r\n\r\n", image_size);
+        printf("Content-Type: image/jpg\r\n");
+        printf("Content-Length: %ld\r\n\r\n", image_size);
+        
 
         // Send the image data
         char buffer[1024];
@@ -50,7 +52,31 @@ void route()
         fclose(image);
     }
 }
+ ROUTE_GET("../images/lion_sleeping.jpg") {
+        
+        printf("HTTP/1.1 200 OK\r\n");
+    FILE *image = fopen("images/lion_sleeping.jpg", "rb");
+    if (image == NULL) {
+        perror("Unable to open image file");
+    } else {
+        fseek(image, 0, SEEK_END);
+        long image_size = ftell(image);
+        rewind(image);
 
+        printf("Content-Type: image/jpg\r\n");
+        // printf("Content-Length: %ld\r\n\r\n", image_size);
+        
+
+        // Send the image data
+        char buffer[1024];
+        size_t bytes_read;
+        while ((bytes_read = fread(buffer, 1, sizeof(buffer), image)) > 0) {
+            fwrite(buffer, 1, bytes_read, stdout);
+        }
+
+        fclose(image);
+    }
+}
 
     ROUTE_GET("/css/style.css"){
         printf("HTTP/1.1 200 OK\r\n\r\n");
