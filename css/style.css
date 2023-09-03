@@ -1,0 +1,64 @@
+*{
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: gray;
+    height: 100vh;
+}
+
+main{
+    height: 100%;
+    width: 100%;
+    margin: 50px;
+    background: url(../images/lion_sleeping.jpg);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+form{
+    margin-top: 30px;
+    margin-left: 60px;
+}
+
+form section{
+    margin: 10px;
+}
+
+form button{
+    padding: 2px;
+}
+
+#indexPost{
+    flex-direction: column;
+}
+
+#indexMain{
+    height: 100%;
+}
+
+#indexForm{
+    margin: 0;
+    margin-bottom: 50px;
+    width: 50%;
+    height: 40%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#indexForm > input{
+    width: 100%;
+    height: 50%;
+    margin-bottom: 10px;
+}
+
+#indexForm > button{
+    width: 10%;
+}
