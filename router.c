@@ -27,6 +27,46 @@ void route()
         printf("Hello! you got here %s , %s %s", method, uri, qs);
     }
 
+    ROUTE_GET("../images/lion_awake.jpg") {
+    FILE *image = fopen("images/lion_awake.jpg", "rb");
+    if (image == NULL) {
+        perror("Unable to open image file");
+    } else {
+        fseek(image, 0, SEEK_END);
+        long image_size = ftell(image);
+        rewind(image);
+
+        printf("HTTP/1.1 200 OK\r\n");
+        // printf("Content-Type: image/jpeg\r\n");
+        // printf("Content-Length: %ld\r\n\r\n", image_size);
+
+        // Send the image data
+        char buffer[1024];
+        size_t bytes_read;
+        while ((bytes_read = fread(buffer, 1, sizeof(buffer), image)) > 0) {
+            fwrite(buffer, 1, bytes_read, stdout);
+        }
+
+        fclose(image);
+    }
+}
+
+
+    ROUTE_GET("/css/style.css"){
+        printf("HTTP/1.1 200 OK\r\n\r\n");
+        FILE *file = fopen("css/style.css", "r");
+        if (file == NULL)
+        {
+            perror("Unable to open file");
+        }
+        char character;
+        while ((character = fgetc(file)) != EOF)
+        {
+            printf("%c", character);
+        }
+        fclose(file);
+    }
+
     ROUTE_POST("/")
     {
         printf("HTTP/1.1 200 OK\r\n\r\n");
@@ -58,15 +98,11 @@ void route()
         char userName[100];
         char userPass[100];
 
-        if (!(fscanf(Login, "%s %s", userName, userPass) == 2))
-        {
-            printf("Failed to read data from the file.\n");
-        }
+        fscanf(Login, "%s %s", userName, userPass);
 
         fclose(Login);
         if (strcmp(userName, buffTmp[0]) == 0 && strcmp(userPass, buffTmp[1]) == 0)
         {
-            printf("HTTP/1.1 200 OK\r\n\r\n");
             FILE *file = fopen("indexPost.html", "r");
 
             if (file == NULL)
