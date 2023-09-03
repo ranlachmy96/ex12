@@ -57,8 +57,8 @@ void serve_forever(const char *PORT)
 
 void startServer(const char *port)
 {
-    struct addrinfo hints,*res, *p;
+    // struct addrinfo hints,*res, *p;
 
-    memset(&hints,0,sizeof(hints));
+    // memset(&hints,0,sizeof(hints));
 
 }
