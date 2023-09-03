@@ -1,5 +1,5 @@
 #include "httpd.h"
-
+#include <string.h>
 void route()
 {
     ROUTE_START()
@@ -64,32 +64,22 @@ void route()
         }
 
         fclose(Login);
-        printf("start1\n");
-        printf("%s, %s\n", buffTmp[0], buffTmp[1]);
-        printf("start2\n");
-        printf("%s, %s\n", userName, userPass);
-
-        if (userName == buffTmp[0] && userPass == buffTmp[1])
+        if (strcmp(userName, buffTmp[0]) == 0 && strcmp(userPass, buffTmp[1]) == 0)
         {
-            printf("good\n");
-        }
-        else
-        {
-            printf("no no good\n");
-        }
+            printf("HTTP/1.1 200 OK\r\n\r\n");
+            FILE *file = fopen("indexPost.html", "r");
 
-        // FILE *file = fopen("indexPost.html", "r");
-
-        // if (file == NULL)
-        // {
-        //     perror("Unable to open file");
-        // }
-        // char character;
-        // while ((character = fgetc(file)) != EOF)
-        // {
-        //     printf("%c", character);
-        // }
-        // fclose(file);
+            if (file == NULL)
+            {
+                perror("Unable to open file");
+            }
+            char character;
+            while ((character = fgetc(file)) != EOF)
+            {
+                printf("%c", character);
+            }
+            fclose(file);
+        }
     }
 
     ROUTE_END()
