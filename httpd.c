@@ -11,8 +11,7 @@
 #include <netinet/in.h>
 #define MAXCONNECTION 100
 
-static int listen, clients[MAXCONNECTION];
-static void startserver(const char *);
+static int listenT, clients[MAXCONNECTION];
 void serve_forever(const char *PORT)
 {
 
@@ -34,7 +33,7 @@ void serve_forever(const char *PORT)
     while (1)
     {
         addrlen = sizeof(clientaddr);
-        clients[slot] = accept(listen, (struct sockaddr *)&clientaddr, &addrlen);
+        clients[slot] = accept(listenT, (struct sockaddr *)&clientaddr, &addrlen);
 
         if (clients[slot] < 0)
         {
@@ -57,8 +56,13 @@ void serve_forever(const char *PORT)
 
 void startServer(const char *port)
 {
-    // struct addrinfo hints,*res, *p;
+    struct addrinfo hints,*res, *p;
 
-    // memset(&hints,0,sizeof(hints));
+    memset(&hints,0,sizeof(hints));
+    
 
+}
+
+void respond(int n){
+    
 }

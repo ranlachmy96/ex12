@@ -7,7 +7,8 @@
 //Server control functions
 
 void serve_forever(const char *PORT);
-
+char *request_header(const char* name);
+void respond(int);
 // Client request
 extern char    *method,    // "GET" or "POST"
         *uri,       // "/index.html" things before '?'
@@ -17,8 +18,9 @@ extern char    *method,    // "GET" or "POST"
 extern char    *payload;     // for POST
 extern int      payload_size;
 
-char *request_header(const char* name);
+
 void analyze_http(char* buf,int rcvd);
+static void startServer(const char *);
 
 // user shall implement this function
 
