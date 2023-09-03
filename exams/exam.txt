@@ -1,4 +1,0 @@
-dan:C,Python,JAVA
-uri:JAVA,Perl
-yossi:Perl,Bash,C
-
