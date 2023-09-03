@@ -13,7 +13,7 @@
 #define MAXCONNECTION 100
 #define SA struct sockaddr
 static char* buf;
-static int listenT, clients[MAXCONNECTION];
+static int listenfd, clients[MAXCONNECTION];
 typedef struct { char *name, *value; } header_t;
 static header_t reqhdr[17] = { {"\0", "\0"} };
 static int clientfd;
@@ -38,8 +38,8 @@ void serve_forever(const char *PORT)
     while (1)
     {
         addrlen = sizeof(clientaddr);
-        clients[slot] = accept(listenT, (struct sockaddr *)&clientaddr, &addrlen);
-
+        clients[slot] = accept(listenfd, (struct sockaddr *)&clientaddr, &addrlen);
+        
         if (clients[slot] < 0)
         {
             perror("no accepts yet");
@@ -61,36 +61,41 @@ void serve_forever(const char *PORT)
 
 void startServer(const char *PORT)
 {
- 	int sockfd, connfd, len;
-	struct sockaddr_in servaddr, cli;
-	// socket create and verification
-	sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	if (sockfd == -1) {
-		printf("socket creation failed...\n");
-		exit(0);
-	}
-	else
-		printf("Socket successfully created..\n");
-	bzero(&servaddr, sizeof(servaddr));
-    
-	// assign IP, PORT
-	servaddr.sin_family = AF_INET;
-	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-	servaddr.sin_port = htons(atoi(PORT));
+ 	    struct addrinfo hints, *res, *p;
 
-	// Binding newly created socket to given IP and verification
-	if ((bind(sockfd, (SA*)&servaddr, sizeof(servaddr))) != 0) {
-		printf("socket bind failed...\n");
-		exit(0);
-	}
-	else
-		printf("Socket successfully binded..\n");
+    // getaddrinfo for host
+    memset (&hints, 0, sizeof(hints));
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_flags = AI_PASSIVE;
+    if (getaddrinfo( NULL, PORT, &hints, &res) != 0)
+    {
+        perror ("getaddrinfo() error");
+        exit(1);
+    }
+    // socket and bind
+    for (p = res; p!=NULL; p=p->ai_next)
+    {
+        int option = 1;
+        listenfd = socket (p->ai_family, p->ai_socktype, 0);
+        setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
+        if (listenfd == -1) continue;
+        if (bind(listenfd, p->ai_addr, p->ai_addrlen) == 0) break;
+    }
+    if (p==NULL)
+    {
+        perror ("socket() or bind()");
+        exit(1);
+    }
 
-	// Now server is ready to listen and verification
-	if ((listen(sockfd, 5)) != 0) {
-		printf("Listen failed...\n");
-		exit(0);
-	}
+    freeaddrinfo(res);
+
+    // listen for incoming connections
+    if ( listen (listenfd, 1000000) != 0 )
+    {
+        perror("listen() error");
+        exit(1);
+    }
 }
 
 void respond(int n)
