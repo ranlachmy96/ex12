@@ -52,10 +52,12 @@ void route()
         fclose(image);
     }
 }
- ROUTE_GET("../images/lion_sleeping.jpg") {
-        
-        printf("HTTP/1.1 200 OK\r\n");
+ ROUTE_GET("/images/lion_sleeping.jpg") {
+    printf("HTTP/1.1 200 OK\r\n");
+
+    // Specify the correct path to the image file relative to your server's root
     FILE *image = fopen("images/lion_sleeping.jpg", "rb");
+
     if (image == NULL) {
         perror("Unable to open image file");
     } else {
@@ -63,9 +65,8 @@ void route()
         long image_size = ftell(image);
         rewind(image);
 
-        printf("Content-Type: image/jpg\r\n");
-        // printf("Content-Length: %ld\r\n\r\n", image_size);
-        
+        printf("Content-Type: image/jpeg\r\n"); // Change to "image/jpeg" for JPEG images
+        printf("Content-Length: %ld\r\n\r\n", image_size); // Send the content length
 
         // Send the image data
         char buffer[1024];
@@ -77,6 +78,7 @@ void route()
         fclose(image);
     }
 }
+
 
     ROUTE_GET("/css/style.css"){
         printf("HTTP/1.1 200 OK\r\n\r\n");
