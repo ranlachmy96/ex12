@@ -167,41 +167,112 @@ ROUTE_GET("/images/lion_awake.jpg") {
             if (fileData == NULL) {
                 perror("Error opening file");
             }
+            else
+        {
+            char line[100];
+            char *file_content = NULL;
+            size_t file_size = 0;
 
-            fseek(fileData, 0, SEEK_END);
-            long file_size = ftell(fileData);
-            fseek(fileData, 0, SEEK_SET);
+            // Read lines until we find the start marker "@"
+            while (fgets(line, sizeof(line), fileData))
+            {
+                if (strstr(line,userName) != NULL)
+                {
+                    // Found the start marker, start reading content
+                    while (fgets(line, sizeof(line), fileData))
+                    {
+                        if (strstr(line, "@") != NULL)
+                        {
+                            // Found the end marker, stop reading
+                            break;
+                        }
 
-            char *file_content = (char *)malloc(file_size + 1);
+                        // Append the line to the content
+                        size_t line_len = strlen(line);
+                        char *temp = realloc(file_content, file_size + line_len + 1);
+                        if (temp == NULL)
+                        {
+                            perror("Memory allocation error");
+                            fclose(fileData);
+                            if (file_content != NULL)
+                            {
+                                free(file_content);
+                            }
+                            return;
+                        }
 
-            if (file_content == NULL) {
-                perror("Memory allocation error");
-                fclose(fileData);
+                        file_content = temp;
+                        memcpy(file_content + file_size, line, line_len);
+                        file_size += line_len;
+                    }
+
+                    // We've read the content between markers, stop reading
+                    break;
+                }
             }
 
-            fread(file_content, 1, file_size, fileData);
-            file_content[file_size] = '\0'; 
+           
+                file_content[file_size] = '\0';
 
+                printf("<!DOCTYPE html>\n");
+                printf("<html lang=\"en\">\n");
+                printf("<head>\n");
+                printf("    <meta charset=\"UTF-8\">\n");
+                printf("    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n");
+                printf("    <title>index</title>\n");
+                printf("    <link rel=\"stylesheet\" href=\"css/style.css\">\n");
+                printf("</head>\n");
+                printf("<body id=\"indexPost\">\n");
+                printf("    <main id=\"indexMain\">\n");
+                printf("    \n");
+                printf("    </main>\n");
+                printf("    <form id=\"indexForm\" action=\"/data\" method=\"post\">\n");
+                printf("        <textarea name=\"data\">%s</textarea>\n", file_content);
+                printf("        <button type=\"submit\">Submit</button>\n");
+                printf("    </form>\n");
+                printf("</body>\n");
+                printf("</html>\n");
 
-            printf("<!DOCTYPE html>\n");
-            printf("<html lang=\"en\">\n");
-            printf("<head>\n");
-            printf("    <meta charset=\"UTF-8\">\n");
-            printf("    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n");
-            printf("    <title>index</title>\n");
-            printf("    <link rel=\"stylesheet\" href=\"css/style.css\">\n");
-            printf("</head>\n");
-            printf("<body id=\"indexPost\">\n");
-            printf("    <main id=\"indexMain\">\n");
-            printf("    \n");
-            printf("    </main>\n");
-            printf("    <form id=\"indexForm\" action=\"/data\" method=\"post\">\n");
-            printf("        <textarea name=\"data\">%s</textarea>\n",file_content);
-            printf("        <button type=\"submit\">Submit</button>\n");
-            printf("    </form>\n");
-            printf("</body>\n");
-            printf("</html>\n");
+                free(file_content);
+            
+            
+
             fclose(fileData);
+        }
+            // fseek(fileData, 0, SEEK_END);
+            // long file_size = ftell(fileData);
+            // fseek(fileData, 0, SEEK_SET);
+
+            // char *file_content = (char *)malloc(file_size + 1);
+
+            // if (file_content == NULL) {
+            //     perror("Memory allocation error");
+            //     fclose(fileData);
+            // }
+
+            // fread(file_content, 1, file_size, fileData);
+            // file_content[file_size] = '\0'; 
+
+
+            // printf("<!DOCTYPE html>\n");
+            // printf("<html lang=\"en\">\n");
+            // printf("<head>\n");
+            // printf("    <meta charset=\"UTF-8\">\n");
+            // printf("    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n");
+            // printf("    <title>index</title>\n");
+            // printf("    <link rel=\"stylesheet\" href=\"css/style.css\">\n");
+            // printf("</head>\n");
+            // printf("<body id=\"indexPost\">\n");
+            // printf("    <main id=\"indexMain\">\n");
+            // printf("    \n");
+            // printf("    </main>\n");
+            // printf("    <form id=\"indexForm\" action=\"/data\" method=\"post\">\n");
+            // printf("        <textarea name=\"data\">%s</textarea>\n",file_content);
+            // printf("        <button type=\"submit\">Submit</button>\n");
+            // printf("    </form>\n");
+            // printf("</body>\n");
+            // printf("</html>\n");
+            // fclose(fileData);
         }
         
     }
@@ -226,7 +297,7 @@ ROUTE_GET("/images/lion_awake.jpg") {
             token = strtok(NULL, "&");
         }
         char* data=strdup(urlDecode(buffTmp[0]));
-FILE *textData = fopen("data.txt", "w");
+FILE *textData = fopen("data.txt", "a");
 
     if (textData == NULL) {
         perror("Failed to open the file");
