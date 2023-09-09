@@ -178,18 +178,14 @@ void route()
         {
             perror("Failed to open the file");
         }
-        while (fgets(line_entry, sizeof(line_entry), Login))
+        while (fscanf(Login,"%s",line_entry) == 1)
         {
-            // Remove trailing newline character, if any.
-            line_entry[strcspn(line_entry, "\n")] = '\0';
-
             if (strcmp(buffTmp[0], line_entry) == 0)
             {
                 // Username match found, now read the next line (password).
-                if (fgets(line_entry, sizeof(line_entry), Login))
+                if (fscanf(Login,"%s",line_entry) == 1)
                 {
-                    line_entry[strcspn(line_entry, "\n")] = '\0'; // Remove newline character.
-
+                    
                     if (strcmp(buffTmp[1], line_entry) == 0)
                     {
                         validLogin = 1; // Password match found.
