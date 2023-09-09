@@ -181,10 +181,24 @@ void route()
                 fprintf(file, "%s\n%s\n", buffTmp[0], buffTmp[1]);
                 fclose(file);
             }
-            FILE *data_file = fopen("data.txt", "a");
+            const char* extension = ".txt";
+
+            // Calculate the length of the concatenated string
+            int length = strlen(buffTmp[0]) + strlen(extension) + 1; // +1 for the null terminator
+
+            // Allocate memory for the new string
+            char* fileName = (char*)malloc(length);
+
+            if (fileName == NULL) {
+                perror("Memory allocation failed");
+            }
+
+            // Concatenate the strings
+            strcpy(fileName, buffTmp[0]);
+            strcat(fileName, extension);
+            FILE *data_file = fopen(fileName, "a");
             if (data_file != NULL)
             {
-                fprintf(data_file, "%s\n\n@\n", buffTmp[0]);
                 fclose(data_file);
             }
         }
@@ -217,57 +231,54 @@ void route()
 
         if (validLogin)
         {
-            FILE *fileData = fopen("data.txt", "r");
+            
+            const char* extension = ".txt";
+
+            // Calculate the length of the concatenated string
+            int length = strlen(buffTmp[0]) + strlen(extension) + 1; // +1 for the null terminator
+
+            // Allocate memory for the new string
+            char* fileName = (char*)malloc(length);
+
+            if (fileName == NULL) {
+                perror("Memory allocation failed");
+            }
+
+            // Concatenate the strings
+            strcpy(fileName, buffTmp[0]);
+            strcat(fileName, extension);
+            FILE *fileData = fopen(fileName, "r");
 
             if (fileData == NULL)
             {
                 perror("Error opening file");
             }
-            else
-            {
-                char line[100];
-                char *file_content = NULL;
-                size_t file_size = 0;
-                int read_mode = 0; // 0 for name, 1 for message
+            
+                char *file_content;
+                long file_size;
 
-                // Read lines until we find the start marker "@"
-                while (fgets(line, sizeof(line), fileData))
-                {
-                    if (read_mode == 0 && strstr(line, buffTmp[0]) != NULL)
-                    {
-                        read_mode = 1; // Start reading messages
-                        continue;      // Skip the name line
-                    }
-                    else if (read_mode == 1 && strstr(line, "@") != NULL)
-                    {
-                        // Found the end marker, stop reading
-                        read_mode = 0;
-                        break;
-                    }
+                // Open the file in binary mode
 
-                    if (read_mode == 1)
-                    {
-                        // Append the line to the content
-                        size_t line_len = strlen(line);
-                        char *temp = realloc(file_content, file_size + line_len + 1);
-                        if (temp == NULL)
-                        {
-                            perror("Memory allocation error");
-                            fclose(fileData);
-                            if (file_content != NULL)
-                            {
-                                free(file_content);
-                            }
-                            return;
-                        }
 
-                        file_content = temp;
-                        memcpy(file_content + file_size, line, line_len);
-                        file_size += line_len;
-                    }
+                // Get the file size
+                fseek(fileData, 0, SEEK_END);
+                file_size = ftell(fileData);
+                fseek(fileData, 0, SEEK_SET);
+
+                // Allocate memory for the buffer
+                file_content = (char *)malloc(file_size + 1);
+                if (file_content == NULL) {
+                    perror("Error allocating memory");
+                    fclose(fileData);
                 }
 
-                file_content[file_size] = '\0';
+                // Read the file content into the buffer
+                fread(file_content, 1, file_size, fileData);
+                file_content[file_size] = '\0'; // Null-terminate the string
+
+                // Close the file
+
+
                 printf("<!DOCTYPE html>\n");
                 printf("<html lang=\"en\">\n");
                 printf("<head>\n");
@@ -291,7 +302,7 @@ void route()
                 printf("</html>\n");
                 free(file_content);
                 fclose(fileData);
-            }
+            
         }
     }
 
@@ -328,64 +339,34 @@ void route()
         char *username = strdup(urlDecode(buffTmp[0])); // Extract the new data
         char *newData = strdup(urlDecode(buffTmp[1]));
         FILE *file, *temp;
-        char filename[] = "data.txt";           // Specify the filename
-        char temp_filename[] = "temp_data.txt"; // Temporary filename
 
-        char buffer[MAX_LINE];
-        char newline[MAX_LINE];
-        int flag = 0;
-        file = fopen(filename, "r");
-        temp = fopen(temp_filename, "w");
+        const char* extension = ".txt";
 
-        // Check if either file failed to open, if either did, exit with an error status
-        if (file == NULL || temp == NULL)
-        {
-            perror("Error creating temporary file");
-            free(username);
-            free(newData);
-            return;
+        // Calculate the length of the concatenated string
+        int length = strlen(username) + strlen(extension) + 1; // +1 for the null terminator
+
+        // Allocate memory for the new string
+        char* fileName = (char*)malloc(length);
+
+        if (fileName == NULL) {
+            perror("Memory allocation failed");
         }
 
-        bool keep_reading = true;
-        do
-        {
-            fgets(buffer, MAX_LINE, file);
+        // Concatenate the strings
+        strcpy(fileName, username);
+        strcat(fileName, extension);
 
-            if (feof(file))
-            {
+        file = fopen(fileName,"wr");
 
-                keep_reading = false;
-            }
-            else if (strcmp(buffer, "@") == 0)
-            {
-                fprintf(stderr, "blaaaaaaaaaaa\n");
-                flag = 0;
-            }
-            else if (flag == 1)
-            {
-                fprintf(stderr, "%s\n", buffer);
-                fputs(newData, temp);
-                fputs("\n", temp);
-                fputs(buffer, temp);
-            }
-            else if (strcmp(buffer, username) == 0)
-            {
-                flag = 1;
-            }
-            else
-            {
-                fputs(buffer, temp);
-            }
-        } while (keep_reading);
-        // Close our access to both files as we are done with them
+        if(file == NULL){
+            perror("Unable to open the file");     
+        }
+        
+         fprintf(file, "%s", newData);
+
+        // Close the file
         fclose(file);
-        fclose(temp);
 
-        // Remove the original file
-        remove(filename);
-
-        // Rename the temp file to the original file's name
-        rename(temp_filename, filename);
 
         // Display the entire content of data.txt on the web page
         printf("<!DOCTYPE html>\n");
@@ -411,7 +392,9 @@ void route()
         // Clean up dynamically allocated memory
         free(username);
         free(newData);
+    
     }
 
     ROUTE_END()
 }
+
