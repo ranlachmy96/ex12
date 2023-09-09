@@ -29,9 +29,8 @@ char *urlDecode(const char *url)
 
             if (strcmp(hex, "0D") == 0 && i + 5 < len && strncmp(url + i + 3, "0A", 2) == 0)
             {
-                // Handle %0D%0A (carriage return and line feed)
-                decodedChar = '\n'; // Replace with newline character
-                i += 5;             // Skip the next two characters
+                decodedChar = '\n';
+                i += 5;
             }
             else
             {
@@ -173,27 +172,23 @@ void route()
 
         if (i == 3 && strcmp(buffTmp[2], "register") == 0)
         {
-            // Open the file in append mode
             FILE *file = fopen("LoginInfo.txt", "a");
             if (file != NULL)
             {
-                // Write the new user and password to the file
                 fprintf(file, "%s\n%s\n", buffTmp[0], buffTmp[1]);
                 fclose(file);
             }
-            const char* extension = ".txt";
+            const char *extension = ".txt";
 
-            // Calculate the length of the concatenated string
-            int length = strlen(buffTmp[0]) + strlen(extension) + 1; // +1 for the null terminator
+            int length = strlen(buffTmp[0]) + strlen(extension) + 1;
 
-            // Allocate memory for the new string
-            char* fileName = (char*)malloc(length);
+            char *fileName = (char *)malloc(length);
 
-            if (fileName == NULL) {
+            if (fileName == NULL)
+            {
                 perror("Memory allocation failed");
             }
 
-            // Concatenate the strings
             strcpy(fileName, buffTmp[0]);
             strcat(fileName, extension);
             FILE *data_file = fopen(fileName, "a");
@@ -231,20 +226,15 @@ void route()
 
         if (validLogin)
         {
-            
-            const char* extension = ".txt";
+            const char *extension = ".txt";
+            int length = strlen(buffTmp[0]) + strlen(extension) + 1;
 
-            // Calculate the length of the concatenated string
-            int length = strlen(buffTmp[0]) + strlen(extension) + 1; // +1 for the null terminator
+            char *fileName = (char *)malloc(length);
 
-            // Allocate memory for the new string
-            char* fileName = (char*)malloc(length);
-
-            if (fileName == NULL) {
+            if (fileName == NULL)
+            {
                 perror("Memory allocation failed");
             }
-
-            // Concatenate the strings
             strcpy(fileName, buffTmp[0]);
             strcat(fileName, extension);
             FILE *fileData = fopen(fileName, "r");
@@ -253,62 +243,55 @@ void route()
             {
                 perror("Error opening file");
             }
-            
-                char *file_content;
-                long file_size;
 
-                // Open the file in binary mode
-
-
-                // Get the file size
-                fseek(fileData, 0, SEEK_END);
-                file_size = ftell(fileData);
-                fseek(fileData, 0, SEEK_SET);
-
-                // Allocate memory for the buffer
-                file_content = (char *)malloc(file_size + 1);
-                if (file_content == NULL) {
-                    perror("Error allocating memory");
-                    fclose(fileData);
-                }
-
-                // Read the file content into the buffer
-                fread(file_content, 1, file_size, fileData);
-                file_content[file_size] = '\0'; // Null-terminate the string
-
-                // Close the file
-
-
-                printf("<!DOCTYPE html>\n");
-                printf("<html lang=\"en\">\n");
-                printf("<head>\n");
-                printf("    <meta charset=\"UTF-8\">\n");
-                printf("    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n");
-                printf("    <title>index</title>\n");
-                printf("    <link rel=\"stylesheet\" href=\"css/style.css\">\n");
-                printf("</head>\n");
-                printf("<body id=\"indexPost\">\n");
-                printf("    <main id=\"indexMain\">\n");
-                printf("<div>\n");
-                printf("<a href=\"\" id=\"logout\">Logout</a>\n");
-                printf("</div>\n");
-                printf("    </main>\n");
-                printf("    <form id=\"indexForm\" action=\"/data\" method=\"post\">\n");
-                printf("         <input type=\"hidden\" name=\"user\" value=\"%s\">", buffTmp[0]);
-                printf("        <textarea name=\"data\">%s</textarea>\n", file_content);
-                printf("        <button type=\"submit\">Submit</button>\n");
-                printf("    </form>\n");
-                printf("</body>\n");
-                printf("</html>\n");
-                free(file_content);
+            char *file_content;
+            long file_size;
+            fseek(fileData, 0, SEEK_END);
+            file_size = ftell(fileData);
+            fseek(fileData, 0, SEEK_SET);
+            file_content = (char *)malloc(file_size + 1);
+            if (file_content == NULL)
+            {
+                perror("Error allocating memory");
                 fclose(fileData);
-            
+            }
+
+            fread(file_content, 1, file_size, fileData);
+            file_content[file_size] = '\0';
+
+            printf("<!DOCTYPE html>\n");
+            printf("<html lang=\"en\">\n");
+            printf("<head>\n");
+            printf("    <meta charset=\"UTF-8\">\n");
+            printf("    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n");
+            printf("    <title>index</title>\n");
+            printf("    <link rel=\"stylesheet\" href=\"css/style.css\">\n");
+            printf("</head>\n");
+            printf("<body id=\"indexPost\">\n");
+            printf("    <main id=\"indexMain\">\n");
+            printf("<div>\n");
+            printf("<a href=\"\" id=\"logout\">Logout</a>\n");
+            printf("</div>\n");
+            printf("    </main>\n");
+            printf("    <form id=\"indexForm\" action=\"/data\" method=\"post\">\n");
+            printf("         <input type=\"hidden\" name=\"user\" value=\"%s\">", buffTmp[0]);
+            printf("        <textarea name=\"data\">%s</textarea>\n", file_content);
+            printf("        <button type=\"submit\">Submit</button>\n");
+            printf("    </form>\n");
+            printf("</body>\n");
+            printf("</html>\n");
+            free(file_content);
+            fclose(fileData);
+        }
+        else
+        {
+
+            printf("I am sorry mario the princess is in another castle go back and try again =)");
         }
     }
 
     ROUTE_POST("/data")
     {
-        //  char *decodedPayload = urlDecode(payload);
         printf("HTTP/1.1 200 OK\r\n\r\n");
         char *buffTmp[2];
         char *token = strtok(payload, "&");
@@ -328,47 +311,36 @@ void route()
             token = strtok(NULL, "&");
         }
 
-        // Make sure you check if there are two values in buffTmp
         if (i != 2)
         {
             perror("Invalid payload");
             return;
         }
 
-        // Extract the username and new data
-        char *username = strdup(urlDecode(buffTmp[0])); // Extract the new data
+        char *username = strdup(urlDecode(buffTmp[0]));
         char *newData = strdup(urlDecode(buffTmp[1]));
-        FILE *file, *temp;
+        FILE *file;
 
-        const char* extension = ".txt";
+        const char *extension = ".txt";
+        int length = strlen(username) + strlen(extension) + 1;
+        char *fileName = (char *)malloc(length);
 
-        // Calculate the length of the concatenated string
-        int length = strlen(username) + strlen(extension) + 1; // +1 for the null terminator
-
-        // Allocate memory for the new string
-        char* fileName = (char*)malloc(length);
-
-        if (fileName == NULL) {
+        if (fileName == NULL)
+        {
             perror("Memory allocation failed");
         }
-
-        // Concatenate the strings
         strcpy(fileName, username);
         strcat(fileName, extension);
 
-        file = fopen(fileName,"wr");
+        file = fopen(fileName, "wr");
 
-        if(file == NULL){
-            perror("Unable to open the file");     
+        if (file == NULL)
+        {
+            perror("Unable to open the file");
         }
-        
-         fprintf(file, "%s", newData);
 
-        // Close the file
+        fprintf(file, "%s", newData);
         fclose(file);
-
-
-        // Display the entire content of data.txt on the web page
         printf("<!DOCTYPE html>\n");
         printf("<html lang=\"en\">\n");
         printf("<head>\n");
@@ -379,22 +351,20 @@ void route()
         printf("</head>\n");
         printf("<body id=\"indexPost\">\n");
         printf("    <main id=\"indexMain\">\n");
-        printf("    \n");
+        printf("<div>\n");
+        printf("<a href=\"/\">Logout</a>\n");
+        printf("</div>\n");
         printf("    </main>\n");
         printf("    <form id=\"indexForm\" action=\"/data\" method=\"post\">\n");
+        printf("         <input type=\"hidden\" name=\"username\" value=\"%s\">\n", username);
         printf("        <textarea name=\"data\">%s</textarea>\n", newData);
-        printf("         <input type=\"hidden\" name=\"%s\">", username);
         printf("        <button type=\"submit\">Submit</button>\n");
         printf("    </form>\n");
         printf("</body>\n");
         printf("</html>\n");
-
-        // Clean up dynamically allocated memory
         free(username);
         free(newData);
-    
     }
 
     ROUTE_END()
 }
-

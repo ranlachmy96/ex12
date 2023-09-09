@@ -63,7 +63,7 @@ void startServer(const char *PORT)
 {
  	struct addrinfo hints, *res, *p;
 
-    // getaddrinfo for host
+    
     memset (&hints, 0, sizeof(hints));
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
@@ -73,7 +73,6 @@ void startServer(const char *PORT)
         perror ("getaddrinfo() error");
         exit(1);
     }
-    // socket and bind
     for (p = res; p!=NULL; p=p->ai_next)
     {
         int option = 1;
@@ -90,7 +89,6 @@ void startServer(const char *PORT)
 
     freeaddrinfo(res);
 
-    // listen for incoming connections
     if ( listen (listenfd, 1000000) != 0 )
     {
         perror("listen() error");
@@ -106,30 +104,23 @@ void respond(int n)
     buf = malloc(65535);
     rcvd=recv(clients[n], buf, 65535, 0);
 
-    if (rcvd<0)    // receive error
+    if (rcvd<0)    
         fprintf(stderr,("recv() error\n"));
-    else if (rcvd==0)    // receive socket closed
+    else if (rcvd==0)    
         fprintf(stderr,"Client disconnected upexpectedly.\n");
-    else    // message received
+    else    
     {
         analyze_http(buf,rcvd);
-
-        // bind clientfd to stdout, making it easier to write
         clientfd = clients[n];
         dup2(clientfd, STDOUT_FILENO);
         close(clientfd);
-
-        // call router
         route();
-
-        // tidy up
         fflush(stdout);
         shutdown(STDOUT_FILENO, SHUT_WR);
         close(STDOUT_FILENO);
     }
 
-    //Closing SOCKET
-    shutdown(clientfd, SHUT_RDWR);         //All further send and recieve operations are DISABLED...
+    shutdown(clientfd, SHUT_RDWR);         
     close(clientfd);
     clients[n]=-1;
 }
