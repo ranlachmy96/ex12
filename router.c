@@ -154,7 +154,7 @@ void route()
     ROUTE_POST("/")
     {
         printf("HTTP/1.1 200 OK\r\n\r\n");
-        char *buffTmp[2];
+        char *buffTmp[3];
         char *token = strtok(payload, "&");
         int i = 0;
         while (token != NULL)
@@ -170,6 +170,25 @@ void route()
 
             token = strtok(NULL, "&");
         }
+
+        if (i == 3 && strcmp(buffTmp[2], "register") == 0)
+        {
+            // Open the file in append mode
+            FILE *file = fopen("LoginInfo.txt", "a");
+            if (file != NULL)
+            {
+                // Write the new user and password to the file
+                fprintf(file, "%s\n%s\n", buffTmp[0], buffTmp[1]);
+                fclose(file);
+            }
+            FILE *data_file = fopen("data.txt", "a");
+            if (data_file != NULL)
+            {
+                fprintf(data_file, "%s\n\n@\n", buffTmp[0]);
+                fclose(data_file);
+            }
+        }
+
         int validLogin = 0;
         char line_entry[256];
         FILE *Login = fopen("LoginInfo.txt", "r");
@@ -178,17 +197,16 @@ void route()
         {
             perror("Failed to open the file");
         }
-        while (fscanf(Login,"%s",line_entry) == 1)
+        while (fscanf(Login, "%s", line_entry) == 1)
         {
             if (strcmp(buffTmp[0], line_entry) == 0)
             {
-                // Username match found, now read the next line (password).
-                if (fscanf(Login,"%s",line_entry) == 1)
+                if (fscanf(Login, "%s", line_entry) == 1)
                 {
-                    
+
                     if (strcmp(buffTmp[1], line_entry) == 0)
                     {
-                        validLogin = 1; // Password match found.
+                        validLogin = 1; 
                         break;
                     }
                 }
@@ -248,7 +266,8 @@ void route()
                         file_size += line_len;
                     }
                 }
-
+            
+                
                 file_content[file_size] = '\0';
                 printf("<!DOCTYPE html>\n");
                 printf("<html lang=\"en\">\n");
@@ -331,7 +350,8 @@ void route()
 
     ROUTE_POST("/data")
     {
-        // char *decodedPayload = urlDecode(payload);
+        //  char *decodedPayload = urlDecode(payload);
+        printf("HTTP/1.1 200 OK\r\n\r\n");
         char *buffTmp[2];
         char *token = strtok(payload, "&");
         int i = 0;
@@ -360,7 +380,6 @@ void route()
         // Extract the username and new data
         char *username = strdup(urlDecode(buffTmp[0])); // Extract the new data
         char *newData = strdup(urlDecode(buffTmp[1]));
-
         FILE *file, *temp;
         char filename[] = "data.txt";           // Specify the filename
         char temp_filename[] = "temp_data.txt"; // Temporary filename
@@ -368,7 +387,6 @@ void route()
         char buffer[MAX_LINE];
         char newline[MAX_LINE];
         int flag = 0;
-
         file = fopen(filename, "r");
         temp = fopen(temp_filename, "w");
 
@@ -386,17 +404,22 @@ void route()
         do
         {
             fgets(buffer, MAX_LINE, file);
+
             if (feof(file))
             {
+
                 keep_reading = false;
             }
-            else if (strcmp(buffer, "@") == 0)
+            else if (strcmp(buffer, "@") == 0) // Add "\n" to match the delimiter
             {
+                fprintf(stderr, "blaaaaaaaaaaa\n");
                 flag = 0;
             }
             else if (flag == 1)
             {
+                fprintf(stderr, "%s\n", buffer);
                 fputs(newData, temp);
+                fputs("\n", temp);
                 fputs(buffer, temp);
             }
             else if (strcmp(buffer, username) == 0)
@@ -408,7 +431,6 @@ void route()
                 fputs(buffer, temp);
             }
         } while (keep_reading);
-
         // Close our access to both files as we are done with them
         fclose(file);
         fclose(temp);
