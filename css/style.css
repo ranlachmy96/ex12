@@ -67,7 +67,7 @@ form button{
 #indexForm > button{
     width: 10%;
 }
-#logout{
+div{
     width: 70%;
     height: 100%;
     display: flex;

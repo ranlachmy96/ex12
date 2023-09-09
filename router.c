@@ -206,7 +206,7 @@ void route()
 
                     if (strcmp(buffTmp[1], line_entry) == 0)
                     {
-                        validLogin = 1; 
+                        validLogin = 1;
                         break;
                     }
                 }
@@ -266,8 +266,7 @@ void route()
                         file_size += line_len;
                     }
                 }
-            
-                
+
                 file_content[file_size] = '\0';
                 printf("<!DOCTYPE html>\n");
                 printf("<html lang=\"en\">\n");
@@ -279,7 +278,9 @@ void route()
                 printf("</head>\n");
                 printf("<body id=\"indexPost\">\n");
                 printf("    <main id=\"indexMain\">\n");
-                printf("    \n");
+                printf("<div>\n");
+                printf("<a href=\"\" id=\"logout\">Logout</a>\n");
+                printf("</div>\n");
                 printf("    </main>\n");
                 printf("    <form id=\"indexForm\" action=\"/data\" method=\"post\">\n");
                 printf("         <input type=\"hidden\" name=\"user\" value=\"%s\">", buffTmp[0]);
@@ -293,60 +294,6 @@ void route()
             }
         }
     }
-
-    //     ROUTE_POST("/data")
-    //     {
-    //         printf("HTTP/1.1 200 OK\r\n\r\n");
-    //         char *buffTmp[1];
-    //         char *token = strtok(payload, "&");
-    //         int i = 0;
-    //         while (token != NULL)
-    //         {
-    //             char *equalSign = strchr(token, '=');
-
-    //             if (equalSign != NULL)
-    //             {
-    //                 char *value = equalSign + 1;
-    //                 buffTmp[i] = value;
-    //                 i++;
-    //             }
-
-    //             token = strtok(NULL, "&");
-    //         }
-    //         char* data=strdup(urlDecode(buffTmp[0]));
-    // FILE *textData = fopen("data.txt", "a");
-
-    //     if (textData == NULL) {
-    //         perror("Failed to open the file");
-    //     }
-
-    //     if (data != NULL) {
-    //         fputs(data, textData);
-    //         fclose(textData);
-    //     } else {
-    //         perror("URL decoding failed");
-    //         fclose(textData);
-    //     }
-
-    //         printf("<!DOCTYPE html>\n");
-    //             printf("<html lang=\"en\">\n");
-    //             printf("<head>\n");
-    //             printf("    <meta charset=\"UTF-8\">\n");
-    //             printf("    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n");
-    //             printf("    <title>index</title>\n");
-    //             printf("    <link rel=\"stylesheet\" href=\"css/style.css\">\n");
-    //             printf("</head>\n");
-    //             printf("<body id=\"indexPost\">\n");
-    //             printf("    <main id=\"indexMain\">\n");
-    //             printf("    \n");
-    //             printf("    </main>\n");
-    //             printf("    <form id=\"indexForm\" action=\"/data\" method=\"post\">\n");
-    //             printf("        <textarea name=\"data\">%s</textarea>\n",data);
-    //             printf("        <button type=\"submit\">Submit</button>\n");
-    //             printf("    </form>\n");
-    //             printf("</body>\n");
-    //             printf("</html>\n");
-    //     }
 
     ROUTE_POST("/data")
     {
@@ -400,7 +347,6 @@ void route()
         }
 
         bool keep_reading = true;
-
         do
         {
             fgets(buffer, MAX_LINE, file);
@@ -410,7 +356,7 @@ void route()
 
                 keep_reading = false;
             }
-            else if (strcmp(buffer, "@") == 0) // Add "\n" to match the delimiter
+            else if (strcmp(buffer, "@") == 0)
             {
                 fprintf(stderr, "blaaaaaaaaaaa\n");
                 flag = 0;
