@@ -69,12 +69,6 @@ void route()
         fclose(file);
     }
 
-    ROUTE_GET("/pass")
-    {
-        printf("HTTP/1.1 200 OK\r\n\r\n");
-        printf("Hello! you got here %s , %s %s", method, uri, qs);
-    }
-
     ROUTE_GET("/images/lion_awake.jpg")
     {
         printf("HTTP/1.1 200 OK\r\n");

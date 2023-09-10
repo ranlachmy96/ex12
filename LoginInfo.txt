@@ -2,7 +2,4 @@ Ran
 123
 Eido
 111
-Naim
-333
-Lion
-555
+
