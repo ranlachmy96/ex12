@@ -1,3 +1,6 @@
+//Ran Lachmy - 207029679
+//Eido Peretz - 314652884
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

@@ -1,17 +1,19 @@
 CC = gcc
-CFLAGS = -std=c11
+CFLAGS = -g
 
-all: main.o http_protocol.o httpd.o router.o
-    $(CC) $(CFLAGS) -o httpd main.o http_protocol.o httpd.o router.o
+SRC = main.c httpd.c http_protocol.c router.c
 
-http_protocol.o: http_protocol.c httpd.h
-    $(CC) $(CFLAGS) -c http_protocol.c -o http_protocol.o
+OBJ = $(SRC:.c=.o)
 
-httpd.o: http_server.c httpd.h
-    $(CC) $(CFLAGS) -c http_server.c -o httpd.o
+EXEC = main
 
-router.o: router.c httpd.h
-    $(CC) $(CFLAGS) -c router.c -o router.o
+all: $(EXEC)
+
+$(EXEC): $(OBJ)
+	$(CC) $(CFLAGS) -o $@ $(OBJ)
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-    rm -f httpd main.o http_protocol.o httpd.o router.o
+	rm -f $(OBJ) $(EXEC)

@@ -1,3 +1,6 @@
+//Ran Lachmy - 207029679
+//Eido Peretz - 314652884
+
 #include "httpd.h"
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -10,6 +13,7 @@
 #include <signal.h>
 #include <netinet/in.h>
 #include <fcntl.h>
+
 #define MAXCONNECTION 100
 #define SA struct sockaddr
 static char* buf;
@@ -17,6 +21,7 @@ static int listenfd, clients[MAXCONNECTION];
 typedef struct { char *name, *value; } header_t;
 static header_t reqhdr[17] = { {"\0", "\0"} };
 static int clientfd;
+
 void serve_forever(const char *PORT)
 {
 
